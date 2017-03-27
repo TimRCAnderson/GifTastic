@@ -1,0 +1,12 @@
+#gif-display *{
+	text-align: center;
+}
+
+#gif-display>div{
+	margin: 10px 0 0 0;
+
+}
+
+.inline-block{
+	display: inline-block;
+}
