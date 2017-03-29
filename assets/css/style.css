@@ -1,10 +1,28 @@
 #gif-display *{
 	text-align: center;
+
+	padding: 3px;
 }
 
 #gif-display>div{
 	margin: 10px 0 0 0;
+}
 
+.imageholder *{
+	border: 1px solid black;
+}
+
+.imageholder img{
+	border-bottom: 0;
+}
+
+#gif-query{
+	width: 100%;
+}
+
+#gif-search{
+	border: 1px solid black;
+	padding: 3px;
 }
 
 .inline-block{

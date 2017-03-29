@@ -32,9 +32,15 @@
 			<div class="col-md-8" id="gif-display">
 			</div>
 			<div class="col-md-4" id="search-zone">
-				<label>Add a type of GIF for which to search</label>
-				<input type="text" id="gif-query">
-				<button class="btn btn-info" id="btn-add">Add It!</button>
+				<form id="gif-search">
+					<div class="form-group">
+						<label for="gif-query">Add a type of GIF for which to search</label><br>
+						<input type="text" id="gif-query">
+					</div>
+					<div class="form-group">
+						<input type="submit" value="Add It!" class="btn btn-info" id="btn-add">
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>

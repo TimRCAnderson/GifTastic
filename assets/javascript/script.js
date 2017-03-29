@@ -1,15 +1,14 @@
-//TODO: put inputs into a form.
-//TODO: rework addButton to take a string argument so that it can be used in initialization as well, thereby reducing the amount of code needed.
+//TODO: add styling to make things look better.
+//TODO: add inputs to the form to allow variable numbers of gifs back, and a rating dropdown.
 
-var topics = ["Daft Punk", "mech", "Iron Man", "Neil deGrasse Tyson", "Bill Nye", "Adam Savage", "Mythbusters", "explosion", "Monty Python", "The IT Crowd"];
+var topics = ["Daft Punk", "mech", "Iron Man", "Neil deGrasse Tyson", "Bill Nye", "Adam Savage", "Mythbusters", "explosion", "The IT Crowd", "Weapon of Choice"];
 
 $(document).ready(function() {
 	var $gifButtonsDiv = $("#gif-buttons");
 	var $gifDisplayDiv = $("#gif-display");
 	var $gifQueryField = $("#gif-query");
+	var $gifSearchForm = $("#gif-search");
 	var giphyURL = "https://api.giphy.com/v1/gifs/search?limit=10&rating=pg&api_key=dc6zaTOxFJmzC&q=";
-
-	console.log($gifQueryField);
 
 	//function that swaps the still and active images from the jquery data object.
 	function stillToggle()
@@ -28,17 +27,16 @@ $(document).ready(function() {
 	}
 
 	//create a button, add formatting, reset the input field, append the button, give it a function for its click event, and then trigger that click event.
-	function addButton()
+	function addButton(text)
 	{
 		var buttonText = $gifQueryField.val();
-		$gifQueryField.val("");
 		var newButton = $("<button>")
 			.addClass("btn btn-info")
-			.text(buttonText)
-			.data("query", buttonText);
+			.text(text)
+			.data("query", text);
 		newButton.click(populateGIFs);
 		newButton.appendTo($gifButtonsDiv);
-		newButton.click();
+		return newButton;
 	}
 
 	//function called by gif buttons. Clears the gifs that are displayed and performs an ajax call using the Giphy API. If the API doesn't bring back any gifs, the button gets removed. Otherwise, up to 10 gifs are displayed.
@@ -46,7 +44,6 @@ $(document).ready(function() {
 	{
 		$gifDisplayDiv.empty();
 		var $this = $(this);
-
 		$.ajax({
 			url: (giphyURL + $this.data("query")),
 			method: "GET"
@@ -55,23 +52,27 @@ $(document).ready(function() {
 			{
 				$this.remove();
 			}
-			for(var j = 0; j < r.data.length; j++)
+			else
 			{
-				$("<div>")
-					.addClass("clearfix inline-block")
-					.append(
-						$("<img>").attr("alt", "gif")
-							.attr("src", r.data[j].images.fixed_height_still.url)
-							.data({
-								still: r.data[j].images.fixed_height_still.url,
-								gif: r.data[j].images.fixed_height.url,
-								isStill: true})
-							.click(stillToggle)
-					)
-					.append($("<div>")
-						.text(r.data[j].rating)
-					)
-					.appendTo($gifDisplayDiv);
+				for(var j = 0; j < r.data.length; j++)
+				{
+					$("<div>")
+						.addClass("clearfix inline-block imageholder")
+						.append(
+							$("<img>")
+								.attr("alt", "gif")
+								.attr("src", r.data[j].images.fixed_height_still.url)
+								.data({
+									still: r.data[j].images.fixed_height_still.url,
+									gif: r.data[j].images.fixed_height.url,
+									isStill: true})
+								.click(stillToggle)
+						)
+						.append($("<div>")
+							.text(r.data[j].rating)
+						)
+						.appendTo($gifDisplayDiv);
+				}
 			}
 		});
 	}
@@ -79,22 +80,15 @@ $(document).ready(function() {
 	//Initialization of the buttons from the array of topics.
 	for(var i = 0; i < topics.length; i++)
 	{
-		var initButton = $("<button>")
-			.addClass("btn btn-info")
-			.text(topics[i])
-			.data("query", topics[i]);
-		initButton.click(populateGIFs);
-		initButton.appendTo($gifButtonsDiv);
+		addButton(topics[i]);
 	}
 
-	//Puts the addButton function on the search field's button.
-	$("#btn-add").click(addButton);
-	//I was unclear that forms had different behavior at the time of writing this, so I had to map a keyup event for the enter key on the search input element, which calls the addButton function too.
-	$gifQueryField.keyup(function (e)
-	{
-		if(e.which === 13)
-		{
-			addButton();
-		}
+	//events that trigger on form submission. Adds button and displays the gifs for that button.
+	$gifSearchForm.submit(function(event) {
+		event.preventDefault();
+		addButton($gifQueryField.val())
+			.click();
+		$gifQueryField.val("");
 	});
+
 });
